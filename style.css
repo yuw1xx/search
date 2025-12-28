@@ -1,0 +1,485 @@
+:root {
+  --bg: #0a0a0c;
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --border: rgba(255, 255, 255, 0.08);
+  --text-main: #ffffff;
+  --text-dim: #a1a1aa;
+  --font-body: 'Inter', sans-serif;
+  --font-head: 'Outfit', sans-serif;
+
+  /* Status Colors */
+  --color-available: #34d399;
+  --color-busy: #fbbf24;
+  --color-away: #f87171;
+}
+
+* {
+  cursor: none !important;
+}
+
+input, .engine-option, #engine-trigger, #settings-trigger, .settings-btn .add-shortcut-btn, .shortcut-item, .modal-btn, .icon-option {
+  pointer-events: auto !important;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* Custom Cursor */
+.cursor-outline {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* Reduced base size for precision */
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  z-index: 10000;
+
+  /* Lighter, softer purple for the base state */
+  border: 1.5px solid rgba(165, 180, 252, 0.5);
+  background-color: rgba(99, 102, 241, 0.02);
+  backdrop-filter: blur(1px);
+
+  /* Centering logic */
+  transform: translate(-50%, -50%) scale(1);
+
+  /* Only transition visual styles, not position */
+  transition: opacity 0.3s ease,
+  border-color 0.3s ease,
+  background-color 0.3s ease,
+  width 0.4s cubic-bezier(0.19, 1, 0.22, 1),
+  height 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Hovering State: Lighter color and moderate size */
+.cursor-active .cursor-outline {
+  width: 20px;
+  height: 20px;
+  /* Changed to a very light blue-white */
+  border-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+/* Clicking: Snappy shrink */
+.cursor-clicking .cursor-outline {
+  transform: translate(-50%, -50%) scale(0.75);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Status Dot Styles */
+.status-dot {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.status-dot::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-available { color: var(--color-available); }
+.status-available::before { background: var(--color-available); box-shadow: 0 0 10px var(--color-available); }
+
+.status-busy { color: var(--color-busy); }
+.status-busy::before { background: var(--color-busy); box-shadow: 0 0 10px var(--color-busy); }
+
+.status-away { color: var(--color-away); }
+.status-away::before { background: var(--color-away); box-shadow: 0 0 10px var(--color-away); }
+
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+@media (max-width: 768px) {
+  html, body {
+    width: 100%;
+    overflow-x: hidden; /* Strict prevention of horizontal scroll */
+    position: relative;
+  }
+
+  body {
+    height: auto;
+    min-height: 100vh;
+    display: block;
+    padding: 1rem 0;
+  }
+
+  body.no-scroll {
+    overflow: hidden; /* Disables background scrolling */
+    height: 100vh;
+  }
+}
+
+/* ENGINE */
+
+/* Search Interface Positioning */
+.search-container {
+  width: 100%;
+  max-width: 480px;
+  z-index: 10;
+  text-align: center;
+}
+
+.search-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.8rem 1.4rem;
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+
+.search-box:focus-within {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.02);
+}
+
+input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  width: 100%;
+}
+
+/* Engine Selector Popup */
+.engine-display-wrapper { position: relative; margin-bottom: 1rem; display: inline-block; }
+.engine-label {
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+.engine-menu {
+  position: absolute;
+  top: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 0.6rem;
+  width: 180px;
+  z-index: 100;
+}
+
+.engine-option {
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  transition: 0.3s;
+  text-align: left;
+}
+
+.engine-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  transform: translateX(5px);
+}
+
+/* Background Clock Elements */
+.bg-clock, .bg-digital {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  pointer-events: none;
+  /* FIX 1: Remove 'transform' from this line to stop it from "floating" */
+  transition: opacity 1s ease, filter 1s ease;
+  opacity: 0;
+  filter: blur(30px);
+}
+
+.bg-digital {
+  font-family: var(--font-head);
+  font-size: 16vw;
+  font-weight: 800;
+  color: var(--text-dim);
+  white-space: nowrap;
+  /* FIX 2: Forces all numbers to be the same width so the clock doesn't shake */
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-active {
+    opacity: 0.15 !important;
+    filter: blur(8px) !important;
+    z-index: -1; /* Keeps it behind the search bar */
+}
+
+.bg-clock { width: 85vh; height: 85vh; border: 1px solid rgba(255,255,255,0.03); border-radius: 50%; }
+.clock-face { position: relative; width: 100%; height: 100%; }
+
+.clock-numbers div { position: absolute; inset: 5%; text-align: center; transform: rotate(calc(var(--i) * 30deg)); }
+.clock-numbers b {
+  display: inline-block;
+  font-family: var(--font-head);
+  font-size: 4.5rem;
+  color: var(--text-dim);
+  transform: rotate(calc(var(--i) * -30deg));
+}
+
+.hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; background: var(--text-main); border-radius: 10px; }
+.hour { width: 10px; height: 25%; margin-left: -5px; }
+.minute { width: 5px; height: 38%; margin-left: -2.5px; opacity: 0.8; }
+.second { width: 2px; height: 45%; margin-left: -1px; background: #6366f1; }
+.center-dot { position: absolute; top: 50%; left: 50%; width: 15px; height: 15px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); }
+
+.bg-digital { font-family: var(--font-head); font-size: 16vw; font-weight: 800; color: var(--text-dim); white-space: nowrap; }
+
+/* Settings Button */
+.settings-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 42px;
+  height: 42px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(15px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  transition: 0.4s;
+  z-index: 1000;
+}
+
+.settings-btn svg {
+  width: 20px; /* Reduced from 24px */
+  height: 20px;
+}
+
+.settings-btn:hover {
+  color: #fff;
+  transform: rotate(90deg) scale(1.1);
+}
+
+.settings-menu {
+  position: fixed;
+  bottom: 5.5rem; /* Adjusted to stay above the smaller button */
+  right: 2rem;
+}
+
+.hidden {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* --- Shortcuts Bar --- */
+.shortcuts-container {
+  pointer-events: auto !important; /* Ensure the bar captures clicks */
+  position: fixed;
+  bottom: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Ensures internal centering */
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(20, 20, 22, 0.6); /* Slightly darker for contrast */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 60px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  z-index: 100;
+}
+
+.shortcut-actions {
+  position: absolute;
+  bottom: 100%; /* Sits above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  padding-bottom: 8px;
+  background: rgba(30, 30, 35, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+.action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.edit-btn:hover { background: rgba(99, 102, 241, 0.2); color: var(--accent); }
+.delete-btn:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+.shortcut-item, .add-shortcut-btn {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  transition: all 0.3s ease;
+  color: var(--text-main);
+  border: 1px solid transparent;
+  flex-shrink: 0; /* Prevents squishing */
+}
+
+.shortcut-item:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.add-shortcut-btn {
+  background: transparent;
+  border: 1px dashed rgba(255,255,255,0.3);
+  color: var(--text-dim);
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: none; /* Important for custom cursor */
+}
+
+.add-shortcut-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+/* --- Modal Styling --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: #1a1a1e;
+  padding: 2rem;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+  width: 360px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.modal-content input {
+  width: 100%;
+  background: rgba(0,0,0,0.2);
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-main);
+  font-family: inherit;
+  outline: none;
+}
+.modal-content input:focus { border-color: var(--accent); }
+
+/* Icon Grid */
+.icon-selector-label { margin-bottom: 10px; color: var(--text-dim); font-size: 0.9rem; }
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 15px 0;
+  margin-bottom: 20px;
+  max-height: 150px;
+  overflow-y: auto; /*Scroll if too many icons */
+  padding: 2px; /* Space for outlines borders */
+}
+
+.icon-option {
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  transition: 0.2s;
+  color: var(--text-dim);
+}
+
+.icon-option:hover { background: rgba(255,255,255,0.1); color: white;}
+
+.icon-option.selected {
+  border-color: var(--accent);
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent);
+}
+
+/* Modal Buttons */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-main);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: none;
+  transition: 0.2s;
+}
+
+.modal-btn:hover { background: rgba(255,255,255,0.15); }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+.btn-primary:hover { background: #5356e3; }
+
+.btn-delete {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.3);
+  color: #ef4444;
+}
+.btn-delete:hover { background: rgba(220, 38, 38, 0.2); }
