@@ -254,7 +254,6 @@ body.light-theme {
   /* 3. Scale Down the Clocks */
 .bg-digital {
     display: block !important; /* Ensure it is not hidden */
-    opacity: 0.12 !important; /* Increase visibility against dark backgrounds */
     font-size: 20vw !important; /* Large enough to read but fits screen width */
     position: absolute;
     left: 50%;
