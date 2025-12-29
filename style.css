@@ -262,7 +262,7 @@ body.light-theme {
   .bg-digital.clock-active {
     opacity: 0.50 !important;
     visibility: visible !important;
-    top: 43% !important;
+    top: 41.5% !important;
     font-size: 18vw !important;
     filter: blur(1.5px) !important;
     transform: translate(-50%, -50%) scale(1) !important;
