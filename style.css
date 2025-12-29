@@ -264,6 +264,7 @@ body.light-theme {
     visibility: visible !important;
     top: 38% !important;
     font-size: 18vw !important;
+    filter: blur(1.5px) !important;
     transform: translate(-50%, -50%) scale(1) !important;
   }
   
