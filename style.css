@@ -260,7 +260,7 @@ body.light-theme {
 
   /* Digital Active: Positioned above bar */
   .bg-digital.clock-active {
-    opacity: 0.15 !important;
+    opacity: 0.50 !important;
     visibility: visible !important;
     top: 38% !important;
     font-size: 18vw !important;
@@ -269,7 +269,7 @@ body.light-theme {
   
   /* Analog Active: Centered behind search */
   .bg-clock.clock-active {
-    opacity: 0.12 !important;
+    opacity: 0.50 !important;
     visibility: visible !important;
     top: 50% !important;
     width: 80vw !important;
