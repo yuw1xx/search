@@ -155,12 +155,53 @@ function renderShortcuts() {
     if(!bar) return;
     const addBtn = document.getElementById('open-shortcut-modal');
     bar.querySelectorAll('.shortcut-item').forEach(i => i.remove());
+
     shortcuts.forEach((s, index) => {
         const item = document.createElement('div');
-        item.className = 'shortcut-item'; item.innerHTML = iconLibrary[s.icon] || iconLibrary['web']; item.title = s.name;
-        item.onmouseenter = () => { activeHoverIndex = index; item.appendChild(actionPopup); actionPopup.classList.remove('hidden'); };
-        item.onmouseleave = (e) => { if (!(e.relatedTarget && actionPopup.contains(e.relatedTarget))) actionPopup.classList.add('hidden'); };
-        item.onclick = (e) => { if (!actionPopup.contains(e.target)) window.location.href = s.url; };
+        item.className = 'shortcut-item';
+        item.innerHTML = iconLibrary[s.icon] || iconLibrary['web'];
+
+        let timer;
+        let isLongPress = false;
+
+        // --- MOBILE TOUCH LOGIC ---
+        item.addEventListener('touchstart', (e) => {
+            isLongPress = false;
+            timer = setTimeout(() => {
+                isLongPress = true;
+                if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback
+                openModal(index);
+            }, 600); // 600ms hold time
+        }, { passive: true });
+
+        item.addEventListener('touchend', (e) => {
+            clearTimeout(timer);
+            if (isLongPress) {
+                e.preventDefault(); // Stop the click from happening
+            }
+        });
+
+        item.addEventListener('touchmove', () => clearTimeout(timer));
+
+        // --- CLICK LOGIC (Works for both Mobile & Desktop) ---
+        item.onclick = (e) => {
+            // If it was a long press or a click on the edit menu, don't navigate
+            if (isLongPress || (actionPopup && actionPopup.contains(e.target))) {
+                e.preventDefault();
+                return;
+            }
+            window.location.href = s.url;
+        };
+
+        // --- DESKTOP HOVER (Optional) ---
+        item.onmouseenter = () => {
+            if(window.innerWidth > 768) {
+                activeHoverIndex = index;
+                item.appendChild(actionPopup);
+                actionPopup.classList.remove('hidden');
+            }
+        };
+
         bar.insertBefore(item, addBtn);
     });
 }
@@ -182,30 +223,66 @@ actionPopup.querySelector('.delete-btn').onclick = (e) => { e.stopPropagation();
 
 document.getElementById('save-shortcut').onclick = (e) => {
     e.preventDefault();
-    const name = document.getElementById('shortcut-name').value.trim(); 
+
+    // Define limits
+    const isMobile = window.innerWidth <= 768;
+    const limit = isMobile ? 5 : 10;
+
+    // Check if we are adding a NEW shortcut (currentEditId is null)
+    if (currentEditId === null && shortcuts.length >= limit) {
+        alert(`Limit reached! You can only have ${limit} shortcuts on this device.`);
+        return;
+    }
+
+    const name = document.getElementById('shortcut-name').value.trim();
     let url = document.getElementById('shortcut-url').value.trim();
-    if (!name || !url) return; 
+
+    if (!name || !url) return;
     if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-    const data = { name, url, icon: selectedIconId };
-    if (currentEditId !== null) shortcuts[currentEditId] = data; else shortcuts.push(data);
-    localStorage.setItem('myShortcuts', JSON.stringify(shortcuts)); 
-    modal.classList.add('hidden'); 
+
+        const data = { name, url, icon: selectedIconId };
+
+    if (currentEditId !== null) {
+        shortcuts[currentEditId] = data;
+    } else {
+        shortcuts.push(data);
+    }
+
+    localStorage.setItem('myShortcuts', JSON.stringify(shortcuts));
+    modal.classList.add('hidden');
     renderShortcuts();
 };
 
-function openModal(idx = null) { 
-    currentEditId = idx; 
-    modal.classList.remove('hidden'); 
-    actionPopup.classList.add('hidden');
-    if(idx !== null) { 
-        document.getElementById('shortcut-name').value = shortcuts[idx].name; 
-        document.getElementById('shortcut-url').value = shortcuts[idx].url; 
-        selectedIconId = shortcuts[idx].icon; 
+document.getElementById('delete-shortcut').onclick = (e) => {
+    e.preventDefault();
+    if (currentEditId !== null) {
+        shortcuts.splice(currentEditId, 1); // Remove the item
+        localStorage.setItem('myShortcuts', JSON.stringify(shortcuts));
+        modal.classList.add('hidden'); // Close modal
+        renderShortcuts(); // Refresh the bar
     }
-    else { 
-        document.getElementById('shortcut-name').value = ''; 
-        document.getElementById('shortcut-url').value = ''; 
-        selectedIconId = 'web'; 
+};
+
+function openModal(idx = null) {
+    currentEditId = idx;
+    modal.classList.remove('hidden');
+    actionPopup.classList.add('hidden');
+
+    const deleteBtn = document.getElementById('delete-shortcut');
+
+    if(idx !== null) {
+        // Editing: Show the delete button
+        document.getElementById('shortcut-name').value = shortcuts[idx].name;
+        document.getElementById('shortcut-url').value = shortcuts[idx].url;
+        selectedIconId = shortcuts[idx].icon;
+        deleteBtn?.classList.remove('hidden');
+    }
+    else {
+        // Adding New: Hide the delete button
+        document.getElementById('shortcut-name').value = '';
+        document.getElementById('shortcut-url').value = '';
+        selectedIconId = 'web';
+        deleteBtn?.classList.add('hidden');
     }
     renderIconSelector();
 }
@@ -217,3 +294,18 @@ function renderIconSelector() {
         o.onclick = () => { selectedIconId = k; renderIconSelector(); }; grid.appendChild(o);
     });
 }
+
+// MOBILE VIEWPORT HEIGHT FIX
+const setMobileHeight = () => {
+    // Calculates 1% of the actual visible inner height
+    let vh = window.innerHeight * 0.01;
+    // Sets the --vh custom property on the root element
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+};
+
+// Listen for orientation changes and window resizing
+window.addEventListener('resize', setMobileHeight);
+window.addEventListener('orientationchange', setMobileHeight);
+
+// Initial calculation
+setMobileHeight();
