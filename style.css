@@ -274,12 +274,13 @@ body.light-theme {
 
   .bg-digital.clock-active {
     display: block !important;
+    visibility: visible !important;
     font-size: 18vw !important;
     position: absolute;
     top: 35% !important; /* Moved UP to clear the search bar */
     left: 50%;
     transform: translate(-50%, -50%) !important;
-    opacity: 0.2 !important;
+    opacity: 0.15 !important;
     z-index: 0;
   }
   
@@ -300,8 +301,26 @@ body.light-theme {
     left: 50%;
     transform: translate(-50%, -50%) !important;
     filter: blur(1.5px) !important; /* Sharp but subtle */
-    opacity: 0.15 !important;
+    opacity: 0.12 !important;
     z-index: 0;
+  }
+
+  .bg-digital, .bg-clock {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-digital:not(.clock-active),
+  .bg-clock:not(.clock-active) {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translate(-50%, -50%) scale(0.9) !important;
   }
 
   .clock-numbers b {
