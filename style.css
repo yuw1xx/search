@@ -234,7 +234,7 @@ body.light-theme {
     z-index: 1001;
   }
 
-  .search-box, .engine-label, #search-suggestions {
+  .search-box, .engine-label {
     backdrop-filter: blur(6px) saturate(140%) !important;
     background: rgba(0, 0, 0, 0.55) !important;
   }
