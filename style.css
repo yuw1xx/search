@@ -222,6 +222,11 @@ body.light-theme {
     height: 100dvh; /* Dynamic viewport height for mobile browsers */
   }
 
+  .bg-digital:not(.clock-active),
+  .bg-clock:not(.clock-active) {
+    display: none !important;
+  }
+
   .search-box, 
   .engine-label,
   #search-suggestions {
@@ -231,7 +236,7 @@ body.light-theme {
 
   /* 2. Resize the Search Container */
   .search-container {
-    max-width: 90%;
+    max-width: 80% !important;
     position: absolute;
     top: 52% !important;
     left: 50%;
@@ -239,7 +244,8 @@ body.light-theme {
     backdrop-filter: blur(6px) saturate(140%) !important;
     margin-top: 0; /* Remove previous margins to ensure clean centering */
     width: 85% !important; /* Prevents edge-to-edge crowding */
-    max-width: 400px;
+    max-width: 320px;
+    z-index: 1001;
   }
 
   .search-box {
@@ -265,6 +271,17 @@ body.light-theme {
     pointer-events: none;
     z-index: 1; /* Sits behind the search container (z-index: 1001) */
   }
+
+  .bg-digital.clock-active {
+    display: block !important;
+    font-size: 18vw !important;
+    position: absolute;
+    top: 35% !important; /* Moved UP to clear the search bar */
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+    opacity: 0.2 !important;
+    z-index: 0;
+  }
   
   .bg-clock {
     width: 80vw !important;
@@ -273,6 +290,18 @@ body.light-theme {
     filter: blur(2px) !important; 
     opacity: 0.15 !important; /* Dimmest background to prevent distraction */
     transition: opacity 0.5s ease, filter 0.5s ease;
+  }
+
+  .bg-clock.clock-active {
+    display: block !important;
+    width: 80vw !important;
+    height: 80vw !important;
+    top: 50% !important;
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+    filter: blur(1.5px) !important; /* Sharp but subtle */
+    opacity: 0.15 !important;
+    z-index: 0;
   }
 
   .clock-numbers b {
@@ -355,6 +384,7 @@ body.light-theme {
   .engine-label {
     padding: 4px 12px !important;
     font-size: 0.65rem !important;
+    background: rgba(0, 0, 0, 0.6) !important;
   }
 
   * {
