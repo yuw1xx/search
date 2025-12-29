@@ -222,6 +222,13 @@ body.light-theme {
     height: 100dvh; /* Dynamic viewport height for mobile browsers */
   }
 
+  .search-box, 
+  .engine-label,
+  #search-suggestions {
+    backdrop-filter: blur(6px) saturate(140%) !important;
+    background: rgba(0, 0, 0, 0.55) !important; /* Slightly darker to maintain contrast with less blur */
+  }
+
   /* 2. Resize the Search Container */
   .search-container {
     max-width: 90%;
@@ -246,13 +253,13 @@ body.light-theme {
   /* 3. Scale Down the Clocks */
 .bg-digital {
     display: block !important; /* Ensure it is not hidden */
-    opacity: 0.25 !important; /* Increase visibility against dark backgrounds */
+    opacity: 0.3 !important; /* Increase visibility against dark backgrounds */
     font-size: 20vw !important; /* Large enough to read but fits screen width */
     position: absolute;
     left: 50%;
-    top: 32% !important; 
+    top: 38% !important; 
     transform: translate(-50%, -50%) !important;
-    
+    margin-bottom: 0;
     text-align: center;
     width: 100%;
     pointer-events: none;
@@ -283,12 +290,13 @@ body.light-theme {
   }
 
   /* 5. Shortcuts Bar Optimization */
-  .shortcuts-container {
-    bottom: 4vh;
-    padding: 10px 20px;
-    width: fit-content; /* Allow the bar to hug the content instead of stretching */
-    min-width: 120px;
-    justify-content: center;
+  .search-container {
+    width: 80% !important;
+    max-width: 320px;
+    position: absolute;
+    top: 52% !important; /* Snugged up under the clock */
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
   }
 
   .shortcut-item, .add-shortcut-btn {
@@ -333,6 +341,17 @@ body.light-theme {
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
+  }
+
+  .engine-display-wrapper {
+    margin-bottom: 0.3rem !important; /* Very tight gap */
+    display: flex;
+    justify-content: center;
+  }
+
+  .engine-label {
+    padding: 4px 12px !important;
+    font-size: 0.65rem !important;
   }
 
   * {
