@@ -321,10 +321,6 @@ body.light-theme {
     font-size: 0.65rem !important;
   }
 
-  .settings-menu {
-    z-index: 9997
-  }
-
   * {
     cursor: auto !important; 
   }
@@ -577,6 +573,7 @@ input::placeholder {
   padding: 12px !important; /* Space between options and the border */
   min-width: 200px;
   border-radius: 24px !important; /* Make the menu itself rounder */
+  z-index: 9997 !important;
 }
 
 .hidden {
