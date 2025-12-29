@@ -227,16 +227,21 @@ body.light-theme {
   .search-container {
     width: 85% !important;
     max-width: 320px;
-    position: absolute;
+    position: relative !important;
     top: 52% !important; /* Single source of truth for centering */
     left: 50%;
     transform: translate(-50%, -50%) !important;
-    z-index: 1001;
+    z-index: 10000;
   }
 
   .search-container.active-search {
-    z-index: 10002 !important;
+    z-index: 10000 !important;
   }
+
+  #search-suggestions {
+  position: absolute;
+  z-index: 10050 !important;
+}
   
   .search-box, .engine-label {
     backdrop-filter: blur(6px) saturate(140%) !important;
