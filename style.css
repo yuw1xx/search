@@ -237,11 +237,6 @@ body.light-theme {
   .search-container.active-search {
     z-index: 10000 !important;
   }
-
-  #search-suggestions {
-  position: absolute;
-  z-index: 10050 !important;
-}
   
   .search-box, .engine-label {
     backdrop-filter: blur(6px) saturate(140%) !important;
@@ -322,6 +317,9 @@ body.light-theme {
 
   .cursor-outline, .cursor-dot {
     display: none !important;
+    visibility: hidden;
+    display: none !important;
+    opacity: 0 !important;
   }
 
   .engine-display-wrapper {
