@@ -226,9 +226,9 @@ body.light-theme {
   .search-container {
     max-width: 90%;
     position: absolute;
-    top: 45%; /* Slightly above absolute center for ergonomics */
+    top: 52% !important;
     left: 50%;
-    transform: translate(-50%, -40%) !important;
+    transform: translate(-50%, -50%) !important;
     margin-top: 0; /* Remove previous margins to ensure clean centering */
     width: 85% !important; /* Prevents edge-to-edge crowding */
     max-width: 400px;
@@ -244,11 +244,19 @@ body.light-theme {
   }
 
   /* 3. Scale Down the Clocks */
-  .bg-digital {
-    font-size: 20vw !important;
-    top: 50%;
+.bg-digital {
+    display: block !important; /* Ensure it is not hidden */
+    opacity: 0.25 !important; /* Increase visibility against dark backgrounds */
+    font-size: 20vw !important; /* Large enough to read but fits screen width */
+    position: absolute;
     left: 50%;
-    transform: translate(-50%, -65%) !important;
+    top: 32% !important; 
+    transform: translate(-50%, -50%) !important;
+    
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+    z-index: 1; /* Sits behind the search container (z-index: 1001) */
   }
 
   .bg-clock {
