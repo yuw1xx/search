@@ -236,6 +236,7 @@ body.light-theme {
     top: 52% !important;
     left: 50%;
     transform: translate(-50%, -50%) !important;
+    backdrop-filter: blur(6px) saturate(140%) !important;
     margin-top: 0; /* Remove previous margins to ensure clean centering */
     width: 85% !important; /* Prevents edge-to-edge crowding */
     max-width: 400px;
@@ -253,11 +254,11 @@ body.light-theme {
   /* 3. Scale Down the Clocks */
 .bg-digital {
     display: block !important; /* Ensure it is not hidden */
-    opacity: 0.3 !important; /* Increase visibility against dark backgrounds */
+    opacity: 0.12 !important; /* Increase visibility against dark backgrounds */
     font-size: 20vw !important; /* Large enough to read but fits screen width */
     position: absolute;
     left: 50%;
-    top: 42% !important; 
+    top: 40% !important; 
     transform: translate(-50%, -50%) !important;
     margin-bottom: 0;
     text-align: center;
@@ -265,17 +266,20 @@ body.light-theme {
     pointer-events: none;
     z-index: 1; /* Sits behind the search container (z-index: 1001) */
   }
-
+  
   .bg-clock {
-    width: 95vw !important; /* Slightly larger than before for better visibility */
-    height: 95vw !important;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 80vw !important;
+    height: 80vw !important;
+    /* Reduced blur for the clock face itself to make it "less blurry" */
+    filter: blur(2px) !important; 
+    opacity: 0.15 !important; /* Dimmest background to prevent distraction */
+    transition: opacity 0.5s ease, filter 0.5s ease;
   }
 
   .clock-numbers b {
-    font-size: 2.2rem !important;
+    font-size: 2rem !important;
+    /* Ensure numbers are sharp enough to read but don't compete with search */
+    filter: blur(0px) !important; 
   }
 
   /* 4. Fix Search Suggestions Alignment */
@@ -294,7 +298,7 @@ body.light-theme {
     width: 80% !important;
     max-width: 320px;
     position: absolute;
-    top: 52% !important; /* Snugged up under the clock */
+    top: 50% !important; /* Snugged up under the clock */
     left: 50%;
     transform: translate(-50%, -50%) !important;
   }
@@ -344,7 +348,7 @@ body.light-theme {
   }
 
   .engine-display-wrapper {
-    margin-bottom: 0.3rem !important; /* Very tight gap */
+    margin-bottom: 0.2rem !important;
     display: flex;
     justify-content: center;
   }
