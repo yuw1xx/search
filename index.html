@@ -10,6 +10,8 @@
 </head>
 <body>
 
+    <div id="wallpaper-container" class="wallpaper-container"></div>
+
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
 
@@ -33,12 +35,12 @@
     <div class="search-container">
         <div class="engine-display-wrapper">
             <span class="engine-label" id="engine-trigger">
-                Search Engine: <span id="current-engine-name">Detecting...</span>
+                <span id="current-engine-name">Detecting...</span>
             </span>
 
             <div id="engine-menu" class="engine-menu hidden">
-                <div class="engine-option" data-engine="Google" data-url="https://www.google.com/search?q=">Google</div>
                 <div class="engine-option" data-engine="DuckDuckGo" data-url="https://duckduckgo.com/?q=">DuckDuckGo</div>
+                <div class="engine-option" data-engine="Google" data-url="https://www.google.com/search?q=">Google</div>
                 <div class="engine-option" data-engine="Brave" data-url="https://search.brave.com/search?q=">Brave Search</div>
                 <div class="engine-option" data-engine="Bing" data-url="https://www.bing.com/search?q=">Bing</div>
             </div>
@@ -47,6 +49,8 @@
         <form id="search-form" class="search-box">
             <div class="status-dot status-available"></div>
             <input type="text" id="search-input" placeholder="Search the web..." autofocus autocomplete="off">
+            
+            <div id="search-suggestions" class="hidden"></div>
         </form>
     </div>
 
@@ -86,11 +90,29 @@
     </button>
 
     <div class="settings-menu hidden" id="settings-menu">
-        <h3 style="margin-top:0">Clock Style</h3>
-        <div class="engine-option">Analog Round</div>
-        <div class="engine-option">Digital Text</div>
+    <div class="settings-section">
+        <h3>Clock Style</h3>
+        <div class="engine-option" onclick="setClock('analog')">Analog Round</div>
+        <div class="engine-option" onclick="setClock('digital')">Digital Text</div>
+    </div>
+<hr>
+    <div class="settings-section">
+        <h3>Wallpaper</h3>
+            <div class="wallpaper-grid">
+                <div class="wall-opt" data-wall="wall-default" style="background: #0a0a0c; border: 1px solid rgba(255,255,255,0.2);"></div>
+                <div class="wall-opt" data-wall="wall1" style="background: linear-gradient(135deg, #ffffc4, #ff6164, #b00012);"></div>
+                <div class="wall-opt" data-wall="wall2" style="background: linear-gradient(180deg, #918c7f, #676d92, #063e80);"></div>
+                <div class="wall-opt" data-wall="wall3" style="background: linear-gradient(45deg, #fada61, #ff9188, #ff5acd);"></div>
+                <div class="wall-opt" data-wall="wall4" style="background: linear-gradient(45deg, #8ec5fc, #e0c3ff);"></div>
+                <div class="wall-opt" data-wall="wall5" style="background: linear-gradient(45deg, #4159d0, #c84fc0, #ffcd70);"></div>
+                <div class="wall-opt" data-wall="wall6" style="background: linear-gradient(90deg, #d9b3e2, #522ca4);"></div>
+                <div class="wall-opt" data-wall="wall7" style="background: #332b22;"></div>
+                <div class="wall-opt" data-wall="wall8" style="background: #4a57af;"></div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
+    <script src="search.js"></script>
 </body>
 </html>
