@@ -219,13 +219,13 @@ body.light-theme {
   /* 1. Base Setup */
   body {
     padding: 0 15px;
-    height: 100dvh;
+    height: calc(var(--vh, 1vh) * 100);
     overflow: hidden;
   }
 
   /* 2. Unified Search Container - PERFECTLY CENTERED */
   .search-container {
-    width: 80% !important;
+    width: 85% !important;
     max-width: 320px;
     position: absolute;
     top: 52% !important; /* Single source of truth for centering */
@@ -283,6 +283,10 @@ body.light-theme {
     transform: translate(-50%, -50%) scale(1) !important;
   }
 
+  .shortcuts-container {
+    bottom: 4vh;
+    z-index: 5000;
+
   .clock-numbers b {
     font-size: 2rem !important;
     filter: blur(0px) !important; 
@@ -296,7 +300,8 @@ body.light-theme {
 
   .settings-btn {
     bottom: 4vh;
-    right: 15%; 
+    right: 15%;
+    z-index: 5001;
   }
 
   .shortcut-item, .add-shortcut-btn {
@@ -798,4 +803,5 @@ input::placeholder {
 .btn-delete:hover {
   background: rgba(220, 38, 38, 0.3) !important;
   color: #ff5f5f !important;
+}
 }
