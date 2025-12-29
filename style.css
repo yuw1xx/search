@@ -214,140 +214,84 @@ body.light-theme {
 
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-/* --- MOBILE OPTIMIZATION --- */
+/* --- MOBILE OPTIMIZATION: FIXED ANIMATION & OVERLAP --- */
 @media (max-width: 768px) {
-  /* 1. Prevent Horizontal Scrolling */
+  /* 1. Base Setup */
   body {
     padding: 0 15px;
-    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    height: 100dvh;
+    overflow: hidden;
   }
 
-  .bg-digital:not(.clock-active),
-  .bg-clock:not(.clock-active) {
-    display: none !important;
-  }
-
-  .search-box, 
-  .engine-label,
-  #search-suggestions {
-    backdrop-filter: blur(6px) saturate(140%) !important;
-    background: rgba(0, 0, 0, 0.55) !important; /* Slightly darker to maintain contrast with less blur */
-  }
-
-  /* 2. Resize the Search Container */
-  .search-container {
-    max-width: 80% !important;
-    position: absolute;
-    top: 52% !important;
-    left: 50%;
-    transform: translate(-50%, -50%) !important;
-    backdrop-filter: blur(6px) saturate(140%) !important;
-    margin-top: 0; /* Remove previous margins to ensure clean centering */
-    width: 85% !important; /* Prevents edge-to-edge crowding */
-    max-width: 320px;
-    z-index: 1001;
-  }
-
-  .search-box {
-    padding: 0.6rem 1rem;
-    gap: 0.7rem;
-  }
-
-  input {
-    font-size: 1rem;
-  }
-
-  /* 3. Scale Down the Clocks */
-.bg-digital {
-    display: block !important; /* Ensure it is not hidden */
-    font-size: 20vw !important; /* Large enough to read but fits screen width */
-    position: absolute;
-    left: 50%;
-    top: 40% !important; 
-    transform: translate(-50%, -50%) !important;
-    margin-bottom: 0;
-    text-align: center;
-    width: 100%;
-    pointer-events: none;
-    z-index: 1; /* Sits behind the search container (z-index: 1001) */
-  }
-
-  .bg-digital.clock-active {
-    display: block !important;
-    visibility: visible !important;
-    font-size: 18vw !important;
-    position: absolute;
-    top: 35% !important; /* Moved UP to clear the search bar */
-    left: 50%;
-    transform: translate(-50%, -50%) !important;
-    opacity: 0.15 !important;
-    z-index: 0;
-  }
-  
-  .bg-clock {
-    width: 80vw !important;
-    height: 80vw !important;
-    /* Reduced blur for the clock face itself to make it "less blurry" */
-    filter: blur(2px) !important; 
-    opacity: 0.15 !important; /* Dimmest background to prevent distraction */
-    transition: opacity 0.5s ease, filter 0.5s ease;
-  }
-
-  .bg-clock.clock-active {
-    display: block !important;
-    width: 80vw !important;
-    height: 80vw !important;
-    top: 50% !important;
-    left: 50%;
-    transform: translate(-50%, -50%) !important;
-    filter: blur(1.5px) !important; /* Sharp but subtle */
-    opacity: 0.12 !important;
-    z-index: 0;
-  }
-
-  .bg-digital, .bg-clock {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -50%) !important;
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
-                visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .bg-digital:not(.clock-active),
-  .bg-clock:not(.clock-active) {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transform: translate(-50%, -50%) scale(0.9) !important;
-  }
-
-  .clock-numbers b {
-    font-size: 2rem !important;
-    /* Ensure numbers are sharp enough to read but don't compete with search */
-    filter: blur(0px) !important; 
-  }
-
-  /* 4. Fix Search Suggestions Alignment */
-  #search-suggestions .engine-option {
-  padding: 14px 2.2rem; /* Larger touch targets for fingers */
-  font-size: 0.95rem;
-  }
-
-  .settings-btn {
-    bottom: 4vh;
-    right: 15%; /* Moves it closer to the center cluster */
-  }
-
-  /* 5. Shortcuts Bar Optimization */
+  /* 2. Unified Search Container - PERFECTLY CENTERED */
   .search-container {
     width: 80% !important;
     max-width: 320px;
     position: absolute;
-    top: 50% !important; /* Snugged up under the clock */
+    top: 52% !important; /* Single source of truth for centering */
     left: 50%;
     transform: translate(-50%, -50%) !important;
+    z-index: 1001;
+  }
+
+  .search-box, .engine-label, #search-suggestions {
+    backdrop-filter: blur(6px) saturate(140%) !important;
+    background: rgba(0, 0, 0, 0.55) !important;
+  }
+
+  /* 3. Smooth Clock Transitions */
+  .bg-digital, .bg-clock {
+    position: absolute;
+    left: 50%;
+    /* Display: block is required for animations; we use opacity and visibility instead */
+    display: block !important; 
+    transition: opacity 0.6s ease, transform 0.6s ease, visibility 0.6s !important;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* State when clock is INACTIVE (Fading out) */
+  .bg-digital:not(.clock-active),
+  .bg-clock:not(.clock-active) {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translate(-50%, -50%) scale(0.85) !important; /* Gentle zoom-out effect */
+  }
+
+  /* Digital Active: Positioned above bar */
+  .bg-digital.clock-active {
+    opacity: 0.15 !important;
+    visibility: visible !important;
+    top: 38% !important;
+    font-size: 18vw !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+  
+  /* Analog Active: Centered behind search */
+  .bg-clock.clock-active {
+    opacity: 0.12 !important;
+    visibility: visible !important;
+    top: 50% !important;
+    width: 80vw !important;
+    height: 80vw !important;
+    filter: blur(1.5px) !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+
+  .clock-numbers b {
+    font-size: 2rem !important;
+    filter: blur(0px) !important; 
+  }
+
+  /* 4. Controls & Shortcuts */
+  #search-suggestions .engine-option {
+    padding: 14px 2.2rem;
+    font-size: 0.95rem;
+  }
+
+  .settings-btn {
+    bottom: 4vh;
+    right: 15%; 
   }
 
   .shortcut-item, .add-shortcut-btn {
@@ -355,43 +299,14 @@ body.light-theme {
     height: 44px;
   }
 
-  .shortcut-item:nth-child(5) ~ #open-shortcut-modal {
-    display: none !important;
-  }
-
-  .shortcut-item.mobile-active {
-    outline: 2px solid var(--clock-color);
-    transform: scale(1.1);
-  }
-
-  .shortcut-actions {
-    display: none !important;
-  }
-
-  /* 6. Symmetrical Modal for Mobile */
+  /* 5. Cleanup & Modals */
   .modal-content {
     width: 85% !important;
     padding: 1.5rem !important;
   }
 
-  .modal-content input {
-    width: 88%;
-    font-size: 1rem;
-  }
-
-  .modal-actions {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  /* 7. Hide Custom Cursor on Touch Devices */
-  .cursor-outline,
-  .cursor-dot {
+  .cursor-outline, .cursor-dot {
     display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
   }
 
   .engine-display-wrapper {
@@ -403,18 +318,10 @@ body.light-theme {
   .engine-label {
     padding: 4px 12px !important;
     font-size: 0.65rem !important;
-    background: rgba(0, 0, 0, 0.6) !important;
   }
 
   * {
-    cursor: auto !important; /* Restore default touch behavior */
-  }
-}
-
-/* Desktop: Hide add button after 10 shortcuts */
-@media (min-width: 769px) {
-  .shortcut-item:nth-child(10) ~ #open-shortcut-modal {
-    display: none !important;
+    cursor: auto !important; 
   }
 }
 
