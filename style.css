@@ -21,6 +21,29 @@
   cursor: none !important;
 }
 
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(20, 20, 22, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    z-index: 10000;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 input, .engine-option, #engine-trigger, #settings-trigger, .settings-btn .add-shortcut-btn, .shortcut-item, .modal-btn, .icon-option {
   pointer-events: auto !important;
 }
@@ -143,6 +166,27 @@ body.light-theme {
   box-shadow: 0 0 0 2px #ffffff, 0 8px 20px rgba(0,0,0,0.4) !important;
 }
 
+/* Weather Widget */
+.weather-widget {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-head);
+    color: var(--text-main);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 16px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-15px);
+    transition: opacity 1s ease, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 /* Custom Cursor */
 .cursor-outline {
   pointer-events: none;
@@ -222,6 +266,40 @@ body.light-theme {
     overflow: hidden;
   }
 
+  .weather-widget {
+        top: 15px !important;
+        right: 15px !important;
+        padding: 10px 14px !important; /* Thinner padding for mobile */
+        border-radius: 20px !important;
+        max-width: 100px; /* Constrains width */
+    }
+
+    .weather-top-row {
+        gap: 8px !important; /* Tighter gap between icon and number */
+    }
+
+    #weather-icon-container svg {
+        width: 28px !important; /* Smaller icon for mobile */
+        height: 28px !important;
+    }
+
+    #weather-temp {
+        font-size: 1.8rem !important; /* Scaled down from 2.8rem */
+    }
+
+    .weather-bottom-row {
+        margin-top: 4px !important;
+    }
+
+    #weather-city {
+        font-size: 0.65rem !important; /* Micro text for city */
+        letter-spacing: 1px !important;
+    }
+
+    #weather-desc {
+        display: none !important; /* Hide description on mobile to stay compact */
+    }
+
   /* 1. FORCE HIDE CUSTOM CURSOR */
   .cursor-outline, .cursor-dot {
     display: none !important;
@@ -241,20 +319,23 @@ body.light-theme {
     z-index: 10000;
   }
 
-.bg-digital, .bg-clock {
-    position: absolute;
-    left: 50%;
-    /* Keep display: block so they don't snap the layout */
-    display: block !important; 
-    pointer-events: none;
-    z-index: 0;
-    
-    /* Cross-fade setup */
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s !important;
-    transform: translate(-50%, -50%) scale(0.9) !important;
-  }
+  .history-delete {
+        opacity: 0.5;
+    }
+  .bg-digital, .bg-clock {
+      position: absolute;
+      left: 50%;
+      /* Keep display: block so they don't snap the layout */
+      display: block !important; 
+      pointer-events: none;
+      z-index: 0;
+      
+      /* Cross-fade setup */
+      opacity: 0 !important;
+      visibility: hidden !important;
+      transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s !important;
+      transform: translate(-50%, -50%) scale(0.9) !important;
+    }
 
   /* 3. REDUCE CLOCK CROWDING */
   .bg-clock.clock-active {
@@ -297,6 +378,98 @@ body.light-theme {
   * {
     cursor: auto !important;
   }
+}
+
+
+/* WEATHER WIDGET */
+
+.weather-widget {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 22px;
+    border-radius: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the bottom text under the top group */
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.weather-top-row {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between Icon and Big Number */
+}
+
+#weather-icon-container svg {
+    width: 42px; /* Large Icon */
+    height: 42px;
+    color: #ffffff !important;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+}
+
+#weather-temp {
+    font-size: 2.8rem; /* Big Number */
+    font-weight: 800;
+    font-family: var(--font-head);
+    color: #fff;
+    line-height: 1;
+}
+
+.weather-bottom-row {
+    margin-top: 8px;
+    text-align: center;
+}
+
+#weather-city {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fff;
+}
+
+#weather-desc {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    margin-top: 2px;
+}
+
+#city-suggestions {
+    position: absolute;
+    top: 45px; /* Directly under the input */
+    left: 0;
+    right: 0;
+    background: rgba(30, 30, 35, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    z-index: 1001;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.city-suggestion-item {
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s;
+}
+
+.city-suggestion-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.city-suggestion-item:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* ENGINE */
@@ -385,6 +558,45 @@ input::placeholder {
   border-bottom: none;
 }
 
+/* --- HISTORY ITEM LAYOUT FIX --- */
+.history-item {
+    display: flex !important;
+    flex-direction: row !important; /* Forces items onto one line */
+    justify-content: space-between; /* Pushes content to left and X to right */
+    align-items: center;
+    padding: 12px 18px;
+    cursor: pointer;
+    min-height: 20px; /* Ensures consistent pill height */
+}
+
+.history-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    pointer-events: none; /* Let the parent handle the click */
+}
+
+/* --- THE DELETE BUTTON --- */
+.history-delete {
+    opacity: 0; /* Hidden by default */
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* Show the X only when the pill is hovered */
+.history-item:hover .history-delete {
+    opacity: 1;
+}
+
+.history-delete:hover {
+    color: #ff6164; /* Red highlight when hovering the X itself */
+    transform: scale(1.2);
+}
+
 .modal-overlay.hidden {
     display: none !important;
 }
@@ -421,7 +633,7 @@ input::placeholder {
   transform: translateY(-2px);
   color: #ffffff;
 }
-/* Critical: Ensure hidden menu doesn't block clicks even when invisible */
+
 .engine-menu.hidden {
   display: none !important;
   opacity: 0;
@@ -436,10 +648,11 @@ input::placeholder {
   background: rgba(0, 0, 0, 0.45) !important;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 0.6rem;
+  border-radius: 24px !important; /* Make the menu itself rounder */
+  padding: 12px !important; /* Space between options and the border */
   width: 180px;
-  z-index: 8888;
+  z-index: 9997 !important;
+  min-width: 200px;
 }
 
 .engine-option {
@@ -535,23 +748,77 @@ input::placeholder {
   transform: rotate(90deg) scale(1.1);
 }
 
-.settings-menu {
-  position: fixed;
-  bottom: 5.5rem; /* Adjusted to stay above the smaller button */
-  right: 2rem;
-}
-
-.settings-menu, .engine-menu {
-  padding: 12px !important; /* Space between options and the border */
-  min-width: 200px;
-  border-radius: 24px !important; /* Make the menu itself rounder */
-  z-index: 9997 !important;
-}
-
 .hidden {
   display: none !important;
   pointer-events: none !important;
 }
+
+/* --- Settings Modal Refinements --- */
+.settings-window {
+    width: 400px !important; /* Slightly wider than shortcut manager for tabs */
+    padding: 0 !important; /* We handle padding inside body */
+    overflow: hidden;
+}
+
+.settings-nav {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+.nav-tab {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    padding: 18px 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-tab.active {
+    color: #fff;
+    border-bottom: 2px solid var(--clock-color);
+}
+
+.settings-body {
+    padding: 25px;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 280px;
+}
+
+.settings-pane {
+    display: none;
+    animation: fadeInModal 0.3s ease forwards;
+}
+
+.settings-pane.active {
+    display: block;
+}
+
+.settings-group {
+    margin-bottom: 25px;
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ensure the wallpaper grid is centered in the modal */
+.settings-window .wallpaper-grid {
+    justify-items: center;
+    padding: 10px 0;
+}
+
+
 
 /* --- Shortcuts Bar --- */
 .shortcuts-container {

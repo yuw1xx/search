@@ -10,6 +10,19 @@
 </head>
 <body>
 
+    <div id="notification-toast" class="toast hidden"></div>
+
+    <div id="weather-widget" class="weather-widget hidden">
+        <div class="weather-top-row">
+            <div id="weather-icon-container"></div>
+            <span id="weather-temp">--°</span>
+        </div>
+        <div class="weather-bottom-row">
+            <span id="weather-city">Location</span>
+            <span id="weather-desc">Searching...</span>
+        </div>
+    </div>
+
     <div id="wallpaper-container" class="wallpaper-container"></div>
 
     <div class="cursor-dot"></div>
@@ -48,7 +61,7 @@
 
         <form id="search-form" class="search-box">
             <div class="status-dot status-available"></div>
-            <input type="text" id="search-input" placeholder="Search the web..." autofocus autocomplete="off">
+            <input type="text" id="search-input" placeholder="Search the web..." autocomplete="off">
             
             <div id="search-suggestions" class="hidden"></div>
         </form>
@@ -89,25 +102,86 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
     </button>
 
-    <div class="settings-menu hidden" id="settings-menu">
-    <div class="settings-section">
-        <h3>Clock Style</h3>
-        <div class="engine-option" onclick="setClock('analog')">Analog Round</div>
-        <div class="engine-option" onclick="setClock('digital')">Digital Text</div>
-    </div>
-<hr>
-    <div class="settings-section">
-        <h3>Wallpaper</h3>
-            <div class="wallpaper-grid">
-                <div class="wall-opt" data-wall="wall-default" style="background: #0a0a0c; border: 1px solid rgba(255,255,255,0.2);"></div>
-                <div class="wall-opt" data-wall="wall1" style="background: linear-gradient(135deg, #ffffc4, #ff6164, #b00012);"></div>
-                <div class="wall-opt" data-wall="wall2" style="background: linear-gradient(180deg, #918c7f, #676d92, #063e80);"></div>
-                <div class="wall-opt" data-wall="wall3" style="background: linear-gradient(45deg, #fada61, #ff9188, #ff5acd);"></div>
-                <div class="wall-opt" data-wall="wall4" style="background: linear-gradient(45deg, #8ec5fc, #e0c3ff);"></div>
-                <div class="wall-opt" data-wall="wall5" style="background: linear-gradient(45deg, #4159d0, #c84fc0, #ffcd70);"></div>
-                <div class="wall-opt" data-wall="wall6" style="background: linear-gradient(90deg, #d9b3e2, #522ca4);"></div>
-                <div class="wall-opt" data-wall="wall7" style="background: #332b22;"></div>
-                <div class="wall-opt" data-wall="wall8" style="background: #4a57af;"></div>
+
+    <div id="settings-modal" class="modal-overlay hidden">
+        <div class="modal-content settings-window">
+            <div class="settings-nav">
+                <button class="nav-tab active" onclick="window.switchTab('appearance')">Appearance</button>
+                <button class="nav-tab" onclick="window.switchTab('search')">Search</button>
+                <button class="nav-tab" onclick="window.switchTab('weather')">Weather</button>
+                <button class="nav-tab" onclick="window.switchTab('misc')">Misc</button>
+            </div>
+
+            <div class="settings-body">
+                <div id="pane-appearance" class="settings-pane active">
+                    <div class="settings-group">
+                        <label class="icon-selector-label">Wallpapers</label>
+                        <div class="wallpaper-grid">
+                            <div class="wall-opt" data-wall="wall-default" style="background: #0a0a0c; border: 1px solid rgba(255,255,255,0.2);"></div>
+                            <div class="wall-opt" data-wall="wall1" style="background: linear-gradient(135deg, #ffffc4, #ff6164, #b00012);"></div>
+                            <div class="wall-opt" data-wall="wall2" style="background: linear-gradient(180deg, #918c7f, #676d92, #063e80);"></div>
+                            <div class="wall-opt" data-wall="wall3" style="background: linear-gradient(45deg, #fada61, #ff9188, #ff5acd);"></div>
+                            <div class="wall-opt" data-wall="wall4" style="background: linear-gradient(45deg, #8ec5fc, #e0c3ff);"></div>
+                            <div class="wall-opt" data-wall="wall5" style="background: linear-gradient(45deg, #4159d0, #c84fc0, #ffcd70);"></div>
+                            <div class="wall-opt" data-wall="wall6" style="background: linear-gradient(90deg, #d9b3e2, #522ca4);"></div>
+                            <div class="wall-opt" data-wall="wall7" style="background: #332b22;"></div>
+                            <div class="wall-opt" data-wall="wall8" style="background: #4a57af;"></div>
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <label class="icon-selector-label">Clock Style</label>
+                        <div class="modal-actions">
+                            <button class="modal-btn" onclick="window.setClock('analog')">Analog</button>
+                            <button class="modal-btn" onclick="window.setClock('digital')">Digital</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pane-search" class="settings-pane">
+                    <div class="settings-group">
+                        <label class="icon-selector-label">Search History</label>
+                        <div class="modal-actions">
+                            <button class="modal-btn btn-delete" onclick="window.clearSearchHistory()">Clear All History</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pane-weather" class="settings-pane">
+                    <div class="settings-group">
+                        <label class="icon-selector-label">Location Services</label>
+                        <p id="weather-status-text" style="font-size: 0.8rem; color: var(--text-dim); text-align: center; margin-bottom: 12px;">Detecting...</p>
+
+                        <div class="weather-form-container" style="position: relative; width: 100%; max-width: 320px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px;">
+                            <input type="text" id="manual-city-input" placeholder="Enter City (e.g. Brno)" autocomplete="off" style="width: 100%; box-sizing: border-box;">
+                            
+                            <div id="city-suggestions" class="hidden"></div>
+                            
+                            <div style="display: flex; gap: 8px;">
+                                <button class="modal-btn btn-primary" onclick="window.saveManualLocation()" style="flex: 1;">Save</button>
+                                <button class="modal-btn" onclick="window.requestGPS()" style="flex: 1;">GPS</button>
+                                <button class="modal-btn" onclick="window.forceRefreshWeather()" style="flex: 0.5;">Refresh</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-group" style="margin-top: 20px;">
+                        <label class="icon-selector-label">Units</label>
+                        <div class="modal-actions">
+                            <button class="modal-btn unit-btn" id="unit-metric" onclick="window.setWeatherUnits('metric')">Celsius (°C)</button>
+                            <button class="modal-btn unit-btn" id="unit-imperial" onclick="window.setWeatherUnits('imperial')">Fahrenheit (°F)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pane-misc" class="settings-pane">
+                    <div class="settings-group">
+                        <label class="icon-selector-label">Dashboard</label>
+                        <p style="font-size: 0.8rem; opacity: 0.5; text-align: center;">Version 4.0</p>
+                        <div class="modal-actions">
+                            <button class="modal-btn" onclick="location.reload()">Reload App</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

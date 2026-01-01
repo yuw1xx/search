@@ -1,95 +1,94 @@
 /**
- * search.js - Finalized with Keyboard Navigation
+ * search.js - Integrated with History, Delete, and Fixes
  */
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const searchForm = document.getElementById('search-form');
     const suggestionsContainer = document.getElementById('search-suggestions');
-    let selectedIndex = -1; // Tracks which suggestion is highlighted
 
+    // --- FIX: Restored missing isUrl function ---
     function isUrl(text) {
         const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i;
         return urlPattern.test(text);
     }
 
+    function saveToHistory(query) {
+        if (!query || !query.trim()) return;
+        let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        history = [query, ...history.filter(h => h !== query)].slice(0, 5);
+        localStorage.setItem('searchHistory', JSON.stringify(history));
+    }
+
+    window.deleteHistoryItem = (e, term) => {
+        e.stopPropagation(); 
+        let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        history = history.filter(h => h !== term);
+        localStorage.setItem('searchHistory', JSON.stringify(history));
+        renderHistory(); 
+    };
+
+    function renderHistory() {
+        const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        if (history.length > 0 && searchInput.value === "") {
+            suggestionsContainer.innerHTML = history.map(term => `
+                <div class="engine-option history-item" onclick="executeHistorySearch('${term}')">
+                    <div class="history-left">
+                        <span>🕒 ${term}</span>
+                    </div>
+                    <div class="history-delete" onclick="window.deleteHistoryItem(event, '${term}')">✕</div>
+                </div>
+            `).join('');
+            suggestionsContainer.classList.remove('hidden');
+        } else if (searchInput.value === "") {
+            suggestionsContainer.classList.add('hidden');
+        }
+    }
+
+    window.executeHistorySearch = (term) => {
+        searchInput.value = term;
+        searchForm.dispatchEvent(new Event('submit'));
+    };
+
+    // --- SUBMIT LOGIC (Now fixed because isUrl exists) ---
     searchForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const query = searchInput.value.trim();
         if (!query) return;
+
+        saveToHistory(query);
 
         if (isUrl(query)) {
             let url = query;
             if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
             window.location.href = url;
         } else {
-            window.location.href = (window.activeEngineUrl || 'https://www.google.com/search?q=') + encodeURIComponent(query);
+            const engineUrl = window.activeEngineUrl || 'https://www.google.com/search?q=';
+            window.location.href = engineUrl + encodeURIComponent(query);
         }
     });
 
-    // --- KEYBOARD NAVIGATION ---
-    searchInput.addEventListener('keydown', (e) => {
-        const items = suggestionsContainer.querySelectorAll('.engine-option');
-        if (items.length === 0) return;
+    searchInput.addEventListener('focus', renderHistory);
 
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            selectedIndex = (selectedIndex + 1) % items.length;
-            updateSelection(items);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            selectedIndex = (selectedIndex - 1 + items.length) % items.length;
-            updateSelection(items);
-        } else if (e.key === 'Enter' && selectedIndex > -1) {
-            e.preventDefault();
-            items[selectedIndex].click(); // Select the highlighted item
-        } else if (e.key === 'Escape') {
-            suggestionsContainer.classList.add('hidden');
-        }
-    });
-
-    function updateSelection(items) {
-        items.forEach((item, index) => {
-            if (index === selectedIndex) {
-                item.classList.add('selected');
-                searchInput.value = item.textContent; // Update input as user scrolls
-            } else {
-                item.classList.remove('selected');
-            }
-        });
-    }
-
+    // Suggestions (JSONP)
     window.handleSuggestions = (data) => {
         const list = (data && Array.isArray(data[1])) ? data[1] : [];
-        selectedIndex = -1; // Reset selection when new data arrives
-        
         if (list.length === 0) {
             suggestionsContainer.classList.add('hidden');
             return;
         }
-
         suggestionsContainer.innerHTML = '';
-        list.slice(0, 6).forEach((item, index) => {
+        list.slice(0, 6).forEach((item) => {
             const div = document.createElement('div');
             div.className = 'engine-option';
             div.textContent = item;
-            
             div.onclick = (e) => {
                 e.stopPropagation();
                 searchInput.value = item;
                 suggestionsContainer.classList.add('hidden');
                 searchForm.dispatchEvent(new Event('submit'));
             };
-            
-            // Allow mouse to update the selection index
-            div.onmouseenter = () => {
-                selectedIndex = index;
-                const items = suggestionsContainer.querySelectorAll('.engine-option');
-                updateSelection(items);
-            };
-
             suggestionsContainer.appendChild(div);
         });
-
         suggestionsContainer.classList.remove('hidden');
     };
 
@@ -98,11 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const term = e.target.value.trim();
         clearTimeout(debounce);
         if (term.length < 2) {
-            suggestionsContainer.innerHTML = '';
-            suggestionsContainer.classList.add('hidden');
+            renderHistory();
             return;
         }
-
         debounce = setTimeout(() => {
             const oldScript = document.getElementById('jsonp-suggestion');
             if (oldScript) oldScript.remove();
