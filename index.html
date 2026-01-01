@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="wallpaper-container" class="wallpaper-container"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <div class="bg-clock clock-active" id="analog-clock">
+        <div class="clock-face">
+            <div class="clock-numbers">
+                <div style="--i:1;"><b>1</b></div><div style="--i:2;"><b>2</b></div><div style="--i:3;"><b>3</b></div>
+                <div style="--i:4;"><b>4</b></div><div style="--i:5;"><b>5</b></div><div style="--i:6;"><b>6</b></div>
+                <div style="--i:7;"><b>7</b></div><div style="--i:8;"><b>8</b></div><div style="--i:9;"><b>9</b></div>
+                <div style="--i:10;"><b>10</b></div><div style="--i:11;"><b>11</b></div><div style="--i:12;"><b>12</b></div>
+            </div>
+            <div class="hand hour" id="hour-hand"></div>
+            <div class="hand minute" id="minute-hand"></div>
+            <div class="hand second" id="second-hand"></div>
+            <div class="center-dot"></div>
+        </div>
+    </div>
+
+    <div class="bg-digital" id="digital-clock">00:00:00</div>
+
+    <div class="search-container">
+        <div class="engine-display-wrapper">
+            <span class="engine-label" id="engine-trigger">
+                <span id="current-engine-name">Detecting...</span>
+            </span>
+
+            <div id="engine-menu" class="engine-menu hidden">
+                <div class="engine-option" data-engine="DuckDuckGo" data-url="https://duckduckgo.com/?q=">DuckDuckGo</div>
+                <div class="engine-option" data-engine="Google" data-url="https://www.google.com/search?q=">Google</div>
+                <div class="engine-option" data-engine="Brave" data-url="https://search.brave.com/search?q=">Brave Search</div>
+                <div class="engine-option" data-engine="Bing" data-url="https://www.bing.com/search?q=">Bing</div>
+            </div>
+        </div>
+
+        <form id="search-form" class="search-box">
+            <div class="status-dot status-available"></div>
+            <input type="text" id="search-input" placeholder="Search the web..." autofocus autocomplete="off">
+            
+            <div id="search-suggestions" class="hidden"></div>
+        </form>
+    </div>
+
+    <div class="shortcuts-container" id="shortcuts-bar">
+    <div id="shortcut-actions" class="shortcut-actions hidden">
+        <button class="action-btn edit-btn" title="Edit">
+            <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </button>
+        <button class="action-btn delete-btn" title="Delete">
+            <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+    </div>
+
+        <button class="add-shortcut-btn" id="open-shortcut-modal">+</button>
+    </div>
+
+    <div class="modal-overlay hidden" id="shortcut-modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0">Manage Shortcut</h3>
+            <input type="text" id="shortcut-name" placeholder="Name (e.g. GitHub)">
+            <input type="text" id="shortcut-url" placeholder="URL (https://...)">
+
+            <div class="icon-selector-label">Select Icon:</div>
+            <div id="icon-grid" class="icon-grid"></div>
+
+            <div class="modal-actions">
+                <button id="delete-shortcut" class="modal-btn btn-delete hidden">Delete</button>
+                <div style="flex-grow: 1;"></div>
+                <button id="close-modal" class="modal-btn">Cancel</button>
+                <button id="save-shortcut" class="modal-btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="settings-btn" id="settings-trigger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+    </button>
+
+    <div class="settings-menu hidden" id="settings-menu">
+    <div class="settings-section">
+        <h3>Clock Style</h3>
+        <div class="engine-option" onclick="setClock('analog')">Analog Round</div>
+        <div class="engine-option" onclick="setClock('digital')">Digital Text</div>
+    </div>
+<hr>
+    <div class="settings-section">
+        <h3>Wallpaper</h3>
+            <div class="wallpaper-grid">
+                <div class="wall-opt" data-wall="wall-default" style="background: #0a0a0c; border: 1px solid rgba(255,255,255,0.2);"></div>
+                <div class="wall-opt" data-wall="wall1" style="background: linear-gradient(135deg, #ffffc4, #ff6164, #b00012);"></div>
+                <div class="wall-opt" data-wall="wall2" style="background: linear-gradient(180deg, #918c7f, #676d92, #063e80);"></div>
+                <div class="wall-opt" data-wall="wall3" style="background: linear-gradient(45deg, #fada61, #ff9188, #ff5acd);"></div>
+                <div class="wall-opt" data-wall="wall4" style="background: linear-gradient(45deg, #8ec5fc, #e0c3ff);"></div>
+                <div class="wall-opt" data-wall="wall5" style="background: linear-gradient(45deg, #4159d0, #c84fc0, #ffcd70);"></div>
+                <div class="wall-opt" data-wall="wall6" style="background: linear-gradient(90deg, #d9b3e2, #522ca4);"></div>
+                <div class="wall-opt" data-wall="wall7" style="background: #332b22;"></div>
+                <div class="wall-opt" data-wall="wall8" style="background: #4a57af;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="search.js"></script>
+</body>
+</html>
