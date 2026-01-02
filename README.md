@@ -31,6 +31,7 @@
 * **Clock Modes**: Switch between a large, blurred background **Analog** clock and a crisp **Digital** display.
 * **Dynamic Wallpapers**: A library of hand-crafted SVG gradients that adapt to your theme.
 * **Custom Cursor**: A smooth, trailing cursor outline that reacts to your clicks.
+* **Custom Font**: Change the font to make your new homepage feel more like "you"
 
 ---
 
@@ -45,5 +46,12 @@
 
 ---
 
-## Where is it?
-The Search is currently being hosted at [yuwixx.dev/search](https://yuwixx.dev/search)
+## QNA
+**Where is it?**
+- The Search is currently being hosted at [yuwixx.dev/search](https://yuwixx.dev/search)
+
+**Why is it asking for my location?**
+- The location is for the weather widget on the site. It uses OpenWeatherMap API to comunicate with servers to give you your local temperature. It's not mandatory, you can enter your own location if you don't with to use your device's location which can be find in the settings. Your location is only shared with the OpenWeatherMap API and it is stored localy on your device. It is also not being saved anywhere and I can't access it. If you wanna see how the weather widget works, check out [script.js](https://github.com/yuw1xx/search/blob/main/script.js)
+
+**Will there be any more updates in the future**
+- I'm trying to constantly improve the Search, so probably yes
