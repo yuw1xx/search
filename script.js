@@ -1,4 +1,4 @@
-/* --- 1. GLOBAL ELEMENTS & STATE --- */
+/* --- GLOBAL ELEMENTS & STATE --- */
 const outline = document.querySelector('.cursor-outline');
 const searchInput = document.getElementById('search-input');
 const searchForm = document.getElementById('search-form');
@@ -8,14 +8,14 @@ const settingsModal = document.getElementById('settings-modal');
 const settingsTrigger = document.getElementById('settings-trigger');
 const closeSettingsBtn = document.getElementById('close-settings');
 
-// State variables - Unified to prevent errors
-let cityDebounce; 
+// State variables - Declared ONCE to prevent redeclaration errors
+let cityDebounce;
 const API_KEY = '23b6d102b049f8bd45b89327abfa9d24';
 
 // ATTACH TO WINDOW: Ensures search.js can read the URL safely
 window.activeEngineUrl = localStorage.getItem('preferredEngineUrl') || 'https://duckduckgo.com/?q=';
 
-/* --- 2. SETTINGS & TAB LOGIC --- */
+/* --- SETTINGS & TAB LOGIC --- */
 window.switchTab = (tabName) => {
     document.querySelectorAll('.nav-tab').forEach(btn => {
         btn.classList.remove('active');
@@ -36,7 +36,7 @@ settingsTrigger?.addEventListener('click', (e) => {
     e.stopPropagation();
     settingsModal?.classList.remove('hidden');
     engineMenu?.classList.add('hidden');
-    window.switchTab('appearance'); 
+    window.switchTab('appearance');
 });
 
 closeSettingsBtn?.addEventListener('click', () => {
@@ -49,13 +49,13 @@ window.clearSearchHistory = () => {
     showToast("History cleared!");
 };
 
-/* --- 3. CUSTOM NOTIFICATION LOGIC --- */
+/* --- CUSTOM NOTIFICATION LOGIC --- */
 function showToast(message) {
     const toast = document.getElementById('notification-toast');
     if (!toast) return;
     toast.innerText = message;
     toast.classList.remove('hidden');
-    void toast.offsetWidth; 
+    void toast.offsetWidth;
     toast.classList.add('visible');
     setTimeout(() => {
         toast.classList.remove('visible');
@@ -63,7 +63,31 @@ function showToast(message) {
     }, 3000);
 }
 
-/* --- 4. WEATHER & LOCATION LOGIC --- */
+/* --- WEATHER & LOCATION LOGIC --- */
+window.toggleWeatherVisibility = () => {
+    const checkbox = document.getElementById('weather-toggle-checkbox');
+    const shouldHide = !checkbox.checked;
+
+    localStorage.setItem('hideWeather', shouldHide);
+    applyWeatherVisibility();
+
+    showToast(shouldHide ? "Weather hidden" : "Weather visible");
+};
+
+function applyWeatherVisibility() {
+    const isHidden = localStorage.getItem('hideWeather') === 'true';
+    const widget = document.getElementById('weather-widget');
+    const checkbox = document.getElementById('weather-toggle-checkbox');
+
+    if (widget) {
+        widget.style.display = isHidden ? 'none' : 'flex';
+    }
+
+    if (checkbox) {
+        checkbox.checked = !isHidden;
+    }
+}
+
 window.setWeatherUnits = (unit) => {
     localStorage.setItem('preferredUnits', unit);
     initWeather();
@@ -111,12 +135,12 @@ async function initWeather() {
 
     const getIcon = (code) => {
         const icons = {
-            storm: `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M19 11h-4.91L17 3h-8l-4 10h5l-2 8l11-10z"/></svg>`,
-            rain: `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M16 13a4 4 0 0 1-8 0"/><path d="M8 19v2M12 21v2M16 19v2"/></svg>`,
-            snow: `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/></svg>`,
-            fog: `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M4 10h16M4 14h16M4 18h16M4 6h16"/></svg>`,
-            sunny: `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`,
-            cloudy: `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`
+            storm: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11h-4.91L17 3h-8l-4 10h5l-2 8l11-10z"/></svg>`,
+            rain: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 13a4 4 0 0 1-8 0"/><path d="M8 19v2M12 21v2M16 19v2"/></svg>`,
+            snow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/></svg>`,
+            fog: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10h16M4 14h16M4 18h16M4 6h16"/></svg>`,
+            sunny: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`,
+            cloudy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`
         };
         if (code >= 200 && code < 300) return icons.storm;
         if (code >= 300 && code < 600) return icons.rain;
@@ -148,36 +172,31 @@ async function initWeather() {
     } else if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (p) => updateWeatherUI(`https://api.openweathermap.org/data/2.5/weather?lat=${p.coords.latitude}&lon=${p.coords.longitude}&units=${units}&appid=${API_KEY}`),
-            () => updateWeatherUI(`https://api.openweathermap.org/data/2.5/weather?lat=49.1951&lon=16.6068&units=${units}&appid=${API_KEY}`),
-            { enableHighAccuracy: true, timeout: 5000 }
+                                                 () => updateWeatherUI(`https://api.openweathermap.org/data/2.5/weather?lat=49.1951&lon=16.6068&units=${units}&appid=${API_KEY}`),
+                                                 { enableHighAccuracy: true, timeout: 5000 }
         );
     }
 }
 
-/* --- 5. CITY SUGGESTIONS --- */
+/* --- CITY SUGGESTIONS WITH DUPLICATE FILTERING --- */
 const cityInputElem = document.getElementById('manual-city-input');
 const citySuggElem = document.getElementById('city-suggestions');
 
-/* --- REFINED CITY SUGGESTIONS WITH DUPLICATE FILTERING --- */
 cityInputElem?.addEventListener('input', (e) => {
     const term = e.target.value.trim();
     clearTimeout(cityDebounce);
     if (term.length < 3) { citySuggElem?.classList.add('hidden'); return; }
-    
+
     cityDebounce = setTimeout(async () => {
-        // We request 5 results to have enough room to filter duplicates and still show 3
         const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(term)}&limit=5&appid=${API_KEY}`;
         try {
             const res = await fetch(url);
             const locs = await res.json();
             if (!locs.length) { citySuggElem?.classList.add('hidden'); return; }
-            
-            // --- DUPLICATE FILTERING ---
+
             const uniqueLocations = [];
             const seenKeys = new Set();
-
             locs.forEach(l => {
-                // Create a unique identifier: "cityname,countrycode"
                 const key = `${l.name.toLowerCase()},${l.country.toLowerCase()}`;
                 if (!seenKeys.has(key)) {
                     seenKeys.add(key);
@@ -186,7 +205,6 @@ cityInputElem?.addEventListener('input', (e) => {
             });
 
             citySuggElem.innerHTML = '';
-            // Display only the first 3 unique locations found
             uniqueLocations.slice(0, 3).forEach(l => {
                 const d = document.createElement('div');
                 d.className = 'city-suggestion-item';
@@ -202,10 +220,10 @@ cityInputElem?.addEventListener('input', (e) => {
             });
             citySuggElem.classList.remove('hidden');
         } catch (e) { console.warn("Suggestion fetch failed", e); }
-    }, 400); 
+    }, 400);
 });
 
-/* --- 6. WALLPAPER LIBRARY --- */
+/* --- WALLPAPER LIBRARY --- */
 const wallpaperLibrary = {
     'wall-default': `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="#0a0a0c"/></svg>`,
     wall1: `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 592 527" preserveAspectRatio="none"><defs><linearGradient id="gradient" x1="0.146" y1="0.146" x2="0.854" y2="0.854"><stop offset="0.000" stop-color="#ffffc4" /><stop offset="0.500" stop-color="#ff6164" /><stop offset="1.000" stop-color="#b00012" /></linearGradient></defs><rect x="0" y="0" width="592" height="527" fill="url(#gradient)" /></svg>`,
@@ -236,7 +254,43 @@ window.setWallpaper = (id) => {
     });
 };
 
-/* --- 7. INITIALIZATION --- */
+/* --- FONT & CLOCK VISIBILITY LOGIC --- */
+window.setFont = (font) => {
+    localStorage.setItem('preferredFont', font);
+    document.documentElement.style.setProperty('--main-font', font);
+    showToast("Font updated");
+};
+
+function applyFont() {
+    const savedFont = localStorage.getItem('preferredFont') || "'Inter', sans-serif";
+    document.documentElement.style.setProperty('--main-font', savedFont);
+
+    const selector = document.getElementById('font-selector');
+    if (selector) selector.value = savedFont;
+}
+
+window.toggleClockVisibility = () => {
+    const isHidden = localStorage.getItem('hideClock') === 'true';
+    const newState = !isHidden;
+    localStorage.setItem('hideClock', newState);
+    applyClockVisibility();
+    showToast(newState ? "Clock hidden" : "Clock visible");
+};
+
+function applyClockVisibility() {
+    const isHidden = localStorage.getItem('hideClock') === 'true';
+    const analog = document.getElementById('analog-clock');
+    const digital = document.getElementById('digital-clock');
+    const checkbox = document.getElementById('clock-toggle-checkbox');
+
+    const displayStyle = isHidden ? 'none' : '';
+    if (analog) analog.style.display = displayStyle;
+    if (digital) digital.style.display = displayStyle;
+
+    if (checkbox) checkbox.checked = !isHidden;
+}
+
+/* --- INITIALIZATION --- */
 document.addEventListener('DOMContentLoaded', () => {
     const savedWall = localStorage.getItem('preferredWallpaper') || 'wall-default';
     window.setWallpaper(savedWall);
@@ -257,6 +311,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('current-engine-name').innerText = savedEngineName;
     }
 
+    applyFont();
+    applyClockVisibility();
+    applyWeatherVisibility();
     renderShortcuts();
     initWeather();
 
@@ -266,19 +323,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeHoverIndex !== null) openModal(activeHoverIndex);
     });
 
-    document.querySelector('.delete-btn')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (activeHoverIndex !== null) {
-            shortcuts.splice(activeHoverIndex, 1);
-            localStorage.setItem('myShortcuts', JSON.stringify(shortcuts));
-            renderShortcuts();
-            actionPopup.classList.add('hidden');
-            showToast("Shortcut removed");
-        }
-    });
+        document.querySelector('.delete-btn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (activeHoverIndex !== null) {
+                shortcuts.splice(activeHoverIndex, 1);
+                localStorage.setItem('myShortcuts', JSON.stringify(shortcuts));
+                renderShortcuts();
+                actionPopup.classList.add('hidden');
+                showToast("Shortcut removed");
+            }
+        });
 });
 
-/* --- 8. UI INTERACTION --- */
+/* --- UI INTERACTION --- */
 const engineTrigger = document.getElementById('engine-trigger');
 
 engineTrigger?.addEventListener('click', (e) => {
@@ -309,7 +366,7 @@ window.addEventListener('click', (e) => {
     }
 });
 
-/* --- 9. CURSOR & CLOCK LOGIC --- */
+/* --- CURSOR & CLOCK LOGIC --- */
 let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
 window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
 function animateCursor() {
@@ -345,7 +402,7 @@ window.setClock = (type) => {
     localStorage.setItem('preferredClock', type);
 };
 
-/* --- 10. SHORTCUTS Logic --- */
+/* --- SHORTCUTS Logic --- */
 const iconLibrary = {
     web: '<svg viewBox="0 0 24 24" width="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
     github: '<svg viewBox="0 0 24 24" width="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>',
@@ -374,17 +431,17 @@ function renderShortcuts() {
         item.onclick = (e) => {
             if (shortcutModal.classList.contains('hidden')) window.location.href = s.url;
         };
-        item.onmouseenter = () => {
-            if(window.innerWidth > 768) {
-                activeHoverIndex = index;
-                item.appendChild(actionPopup);
-                actionPopup.classList.remove('hidden');
-            }
-        };
-        item.onmouseleave = () => {
-            actionPopup.classList.add('hidden');
-        };
-        bar.insertBefore(item, addBtn);
+            item.onmouseenter = () => {
+                if(window.innerWidth > 768) {
+                    activeHoverIndex = index;
+                    item.appendChild(actionPopup);
+                    actionPopup.classList.remove('hidden');
+                }
+            };
+            item.onmouseleave = () => {
+                actionPopup.classList.add('hidden');
+            };
+            bar.insertBefore(item, addBtn);
     });
 }
 
@@ -424,7 +481,7 @@ document.getElementById('save-shortcut')?.addEventListener('click', (e) => {
     let url = document.getElementById('shortcut-url').value.trim();
     if (!name || !url) return;
     if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-    const data = { name, url, icon: selectedIconId };
+        const data = { name, url, icon: selectedIconId };
     if (currentEditId !== null) shortcuts[currentEditId] = data;
     else shortcuts.push(data);
     localStorage.setItem('myShortcuts', JSON.stringify(shortcuts));

@@ -4,8 +4,16 @@
   --border: rgba(255, 255, 255, 0.08);
   --text-main: #ffffff;
   --text-dim: #a1a1aa;
-  --font-body: 'Inter', sans-serif;
-  --font-head: 'Outfit', sans-serif;
+
+  /* Base Glass Tints */
+  --glass-dark: rgba(10, 10, 12, 0.7);    /* Deep Obsidian for dark mode */
+  --glass-light: rgba(40, 30, 55, 0.65);  /* Muted Slate for light mode */
+
+  /* Define the master variable */
+  --main-font: 'Inter', sans-serif;
+
+  --font-body: var(--main-font);
+  --font-head: var(--main-font);
 
   /* Status Colors */
   --color-available: #34d399;
@@ -19,6 +27,7 @@
 
 * {
   cursor: none !important;
+  font-family: var(--main-font) !important;
 }
 
 .toast {
@@ -48,6 +57,22 @@ input, .engine-option, #engine-trigger, #settings-trigger, .settings-btn .add-sh
   pointer-events: auto !important;
 }
 
+/* Ensure the text inside the engine dropdown is always white */
+.engine-option {
+  color: #ffffff !important;
+  transition: background 0.3s ease;
+}
+
+/* Add a subtle hover effect for better visibility */
+.engine-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure the main trigger badge text is white by default */
+#engine-trigger {
+color: #ffffff !important;
+}
+
 .search-box, .engine-menu, .settings-menu, .modal-content {
   background: rgba(0, 0, 0, 0.4) !important; /* Semi-dark tint */
   backdrop-filter: blur(12px) saturate(180%); /* Frosted glass effect */
@@ -61,12 +86,7 @@ input, .engine-option, #engine-trigger, #settings-trigger, .settings-btn .add-sh
 }
 
 /* Fix the Analog Clock Hands */
-.hand.hour, .hand.minute {
-  background: var(--clock-color) !important;
-  transition: background 0.5s ease;
-}
-
-.hand.second {
+.hand.hour, .hand.minute, .hand.second, .center-dot {
   background: var(--clock-color) !important;
   transition: background 0.5s ease;
 }
@@ -87,7 +107,6 @@ body {
 hr {
   border: none;
   height: 1px;
-  /* Soft gradient that fades at the ends */
   background: linear-gradient(
     90deg,
     transparent,
@@ -99,8 +118,24 @@ hr {
 }
 
 body.light-theme {
-  --clock-color: #000000;
-  --clock-shadow: rgba(255, 255, 255, 0.2);
+  --clock-color: rgba(0, 0, 0, 0.85);
+  --text-main: rgba(0, 0, 0, 0.85);
+  --text-dim: rgba(0, 0, 0, 0.5);
+  --glass-light: rgba(255, 255, 255, 0.25);
+}
+
+.weather-widget, .search-box, .modal-content {
+    background: var(--glass-dark) !important;
+    backdrop-filter: blur(16px) saturate(140%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.5s ease, backdrop-filter 0.5s ease;
+}
+
+/* Elements adapt when a bright wallpaper is active */
+.light-theme .weather-widget,
+.light-theme .modal-content {
+    background: var(--glass-light) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Wallpaper */
@@ -110,7 +145,6 @@ body.light-theme {
   z-index: -2;
   pointer-events: none;
   background-color: var(--bg);
-  /* Use a simple 'ease' transition for opacity */
   transition: opacity 0.4s ease;
   opacity: 1;
 }
@@ -166,27 +200,6 @@ body.light-theme {
   box-shadow: 0 0 0 2px #ffffff, 0 8px 20px rgba(0,0,0,0.4) !important;
 }
 
-/* Weather Widget */
-.weather-widget {
-    position: fixed;
-    top: 2rem;
-    right: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-head);
-    color: var(--text-main);
-    background: rgba(0, 0, 0, 0.3);
-    padding: 8px 16px;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1000;
-    opacity: 0;
-    transform: translateY(-15px);
-    transition: opacity 1s ease, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
 /* Custom Cursor */
 .cursor-outline {
   pointer-events: none;
@@ -197,10 +210,7 @@ body.light-theme {
   height: 22px;
   border-radius: 50%;
   z-index: 10000;
-
-  /* Use the variable for the border color */
   border: 1.5px solid var(--clock-color);
-  /* Give the background a very slight tint of the same color */
   background-color: var(--clock-shadow);
   backdrop-filter: blur(1px);
 
@@ -220,7 +230,6 @@ body.light-theme {
   height: 20px;
   border-color: var(--clock-color);
   background-color: var(--clock-shadow);
-  /* Add a glow that matches the theme */
   box-shadow: 0 0 15px var(--clock-shadow);
 }
 
@@ -258,7 +267,7 @@ body.light-theme {
 
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-/* --- MOBILE OPTIMIZATION: REPAIRED --- */
+/* --- MOBILE OPTIMIZATION --- */
 @media (max-width: 768px) {
   body {
     padding: 0 15px;
@@ -266,12 +275,13 @@ body.light-theme {
     overflow: hidden;
   }
 
-  .weather-widget {
-        top: 15px !important;
-        right: 15px !important;
-        padding: 10px 14px !important; /* Thinner padding for mobile */
-        border-radius: 20px !important;
-        max-width: 100px; /* Constrains width */
+    .weather-widget {
+      top: 15px !important;
+      right: 15px !important;
+      background: rgba(0, 0, 0, 0.4) !important; /* Unified mobile background */
+      backdrop-filter: blur(8px) saturate(180%) !important;
+      padding: 10px 14px !important;
+      border-radius: 20px !important;
     }
 
     .weather-top-row {
@@ -300,7 +310,7 @@ body.light-theme {
         display: none !important; /* Hide description on mobile to stay compact */
     }
 
-  /* 1. FORCE HIDE CUSTOM CURSOR */
+  /* FORCE HIDE CUSTOM CURSOR */
   .cursor-outline, .cursor-dot {
     display: none !important;
     visibility: hidden !important;
@@ -308,7 +318,7 @@ body.light-theme {
     pointer-events: none !important;
   }
 
-  /* 2. CENTER SEARCH WITH BETTER SPACING */
+  /* CENTER SEARCH WITH BETTER SPACING */
   .search-container {
     width: 90% !important;
     max-width: 340px;
@@ -325,19 +335,16 @@ body.light-theme {
   .bg-digital, .bg-clock {
       position: absolute;
       left: 50%;
-      /* Keep display: block so they don't snap the layout */
       display: block !important; 
       pointer-events: none;
       z-index: 0;
-      
-      /* Cross-fade setup */
       opacity: 0 !important;
       visibility: hidden !important;
       transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s !important;
       transform: translate(-50%, -50%) scale(0.9) !important;
     }
 
-  /* 3. REDUCE CLOCK CROWDING */
+  /* REDUCE CLOCK CROWDING */
   .bg-clock.clock-active {
     opacity: 0.5 !important; /* Faded more for better readability */
     display: block !important;
@@ -351,7 +358,7 @@ body.light-theme {
     font-size: 1.8rem !important; /* Smaller numbers to avoid overlap */
   }
 
-  /* 4. DIGITAL CLOCK POSITION */
+  /* DIGITAL CLOCK POSITION */
   .bg-digital.clock-active {
     opacity: 0.5 !important;
     display: block !important;
@@ -367,7 +374,7 @@ body.light-theme {
     transform: translate(-50%, -50%) scale(1) !important;
   }
 
-  /* 5. DYNAMIC SHORTCUTS */
+  /* DYNAMIC SHORTCUTS */
   .shortcuts-container {
     bottom: 5vh;
     width: max-content !important; /* Shrinks to fit actual icons */
@@ -384,19 +391,19 @@ body.light-theme {
 /* WEATHER WIDGET */
 
 .weather-widget {
-    position: fixed;
-    top: 25px;
-    right: 25px;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 16px 22px;
-    border-radius: 28px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centers the bottom text under the top group */
-    z-index: 1000;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  background: rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(15px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 16px 22px;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .weather-top-row {
@@ -408,7 +415,7 @@ body.light-theme {
 #weather-icon-container svg {
     width: 42px; /* Large Icon */
     height: 42px;
-    color: #ffffff !important;
+    stroke: var(--clock-color) !important;
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
 }
 
@@ -416,7 +423,7 @@ body.light-theme {
     font-size: 2.8rem; /* Big Number */
     font-weight: 800;
     font-family: var(--font-head);
-    color: #fff;
+    color: var(--clock-color) !important;
     line-height: 1;
 }
 
@@ -431,7 +438,7 @@ body.light-theme {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: #fff;
+    color: var(--clock-color) !important;
 }
 
 #weather-desc {
@@ -558,7 +565,7 @@ input::placeholder {
   border-bottom: none;
 }
 
-/* --- HISTORY ITEM LAYOUT FIX --- */
+/* HISTORY ITEM */
 .history-item {
     display: flex !important;
     flex-direction: row !important; /* Forces items onto one line */
@@ -576,7 +583,7 @@ input::placeholder {
     pointer-events: none; /* Let the parent handle the click */
 }
 
-/* --- THE DELETE BUTTON --- */
+/* THE DELETE BUTTON */
 .history-delete {
     opacity: 0; /* Hidden by default */
     padding: 4px 8px;
@@ -677,7 +684,6 @@ input::placeholder {
   transform: translate(-50%, -50%);
   z-index: -1;
   pointer-events: none;
-  /* FIX 1: Remove 'transform' from this line to stop it from "floating" */
   transition: opacity 1s ease, filter 1s ease;
   opacity: 0;
   filter: blur(30px);
@@ -689,7 +695,6 @@ input::placeholder {
   font-weight: 800;
   color: var(--text-dim);
   white-space: nowrap;
-  /* FIX 2: Forces all numbers to be the same width so the clock doesn't shake */
   font-variant-numeric: tabular-nums;
 }
 
@@ -715,7 +720,7 @@ input::placeholder {
 .hour { width: 10px; height: 25%; margin-left: -5px; }
 .minute { width: 5px; height: 38%; margin-left: -2.5px; opacity: 0.8; }
 .second { width: 2px; height: 45%; margin-left: -1px; background: #6366f1; }
-.center-dot { position: absolute; top: 50%; left: 50%; width: 15px; height: 15px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); }
+.center-dot { position: absolute; top: 50%; left: 50%; width: 15px; height: 15px; background: var(--clock-color); border-radius: 50%; transform: translate(-50%, -50%); }
 
 .bg-digital { font-family: var(--font-head); font-size: 16vw; font-weight: 800; color: var(--text-dim); white-space: nowrap; }
 
@@ -753,11 +758,30 @@ input::placeholder {
   pointer-events: none !important;
 }
 
-/* --- Settings Modal Refinements --- */
+/* Settings Modal */
 .settings-window {
-    width: 400px !important; /* Slightly wider than shortcut manager for tabs */
+    width: 520px !important; /* Slightly wider than shortcut manager for tabs */
+    height: 520px; /* Fixed height to prevent jumping */
     padding: 0 !important; /* We handle padding inside body */
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.settings-panes {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.settings-panes::-webkit-scrollbar {
+  width: 6px;
+}
+
+.settings-panes::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 .settings-nav {
@@ -820,7 +844,7 @@ input::placeholder {
 
 
 
-/* --- Shortcuts Bar --- */
+/* Shortcuts Bar */
 .shortcuts-container {
   pointer-events: auto !important; /* Ensure the bar captures clicks */
   position: fixed;
@@ -909,7 +933,7 @@ input::placeholder {
   background: rgba(99, 102, 241, 0.1);
 }
 
-/* --- Modal Styling --- */
+/* Modal Styling */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -926,7 +950,7 @@ input::placeholder {
   padding: 2rem;
   border-radius: 24px;
   border: 1px solid rgba(255,255,255,0.1);
-  width: 360px; /* Keeping your current width */
+  width: 360px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   display: flex;
   flex-direction: column;
@@ -954,8 +978,31 @@ input::placeholder {
 
 .modal-content input:focus { border-color: var(--accent); }
 
+.modal-select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 10px;
+  border-radius: 12px;
+  outline: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.modal-select:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-select option {
+  background: #1a1a1c;
+  color: white;
+}
+
 /* Icon Grid */
 .icon-selector-label {
+  display: block;
   width: 100%;
   text-align: center;
   margin-bottom: 10px;
@@ -1036,3 +1083,55 @@ input::placeholder {
   color: #ff5f5f !important;
 }
 
+/* SWITCH */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The Slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: .4s;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--accent-color, #6366f1); /* Uses your accent color if defined */
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}

@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -127,6 +132,16 @@
                             <div class="wall-opt" data-wall="wall7" style="background: #332b22;"></div>
                             <div class="wall-opt" data-wall="wall8" style="background: #4a57af;"></div>
                         </div>
+                        <div class="settings-group" style="margin-top: 20px;">
+                            <label class="icon-selector-label">Dashboard Font</label>
+                            <select id="font-selector" class="modal-select" onchange="window.setFont(this.value)">
+                                <option value="'Inter', sans-serif">Inter (Modern)</option>
+                                <option value="'Poppins', sans-serif">Poppins (Geometric)</option>
+                                <option value="'JetBrains Mono', monospace">JetBrains Mono (Tech)</option>
+                                <option value="'Playfair Display', serif">Playfair (Elegant)</option>
+                                <option value="'Roboto', sans-serif">Roboto (Clean)</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="settings-group">
                         <label class="icon-selector-label">Clock Style</label>
@@ -135,6 +150,13 @@
                             <button class="modal-btn" onclick="window.setClock('digital')">Digital</button>
                         </div>
                     </div>
+                    <div class="settings-group" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center;">
+                            <label class="icon-selector-label">Display Clock</label>
+                            <label class="switch">
+                                <input type="checkbox" id="clock-toggle-checkbox" onchange="window.toggleClockVisibility()">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
                 </div>
 
                 <div id="pane-search" class="settings-pane">
@@ -171,12 +193,22 @@
                             <button class="modal-btn unit-btn" id="unit-imperial" onclick="window.setWeatherUnits('imperial')">Fahrenheit (°F)</button>
                         </div>
                     </div>
+
+                    <div class="settings-group" style="margin-top: 20px;">
+                        <label class="icon-selector-label">Display Weather</label>
+                        <div class="modal-actions">
+                            <label class="switch">
+                                <input type="checkbox" id="weather-toggle-checkbox" onchange="window.toggleWeatherVisibility()">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="pane-misc" class="settings-pane">
                     <div class="settings-group">
                         <label class="icon-selector-label">Dashboard</label>
-                        <p style="font-size: 0.8rem; opacity: 0.5; text-align: center;">Version 4.0</p>
+                        <p style="font-size: 0.8rem; opacity: 0.5; text-align: center;">Version 4.1</p>
                         <div class="modal-actions">
                             <button class="modal-btn" onclick="location.reload()">Reload App</button>
                         </div>
