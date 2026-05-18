@@ -1,0 +1,24 @@
+{
+  "rewrites": [
+    {
+      "source": "/search/assets/:file*",
+      "destination": "/assets/:file*"
+    },
+    {
+      "source": "/search",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:path*",
+      "destination": "https://portfolio-yuw1xxs-projects.vercel.app/:path*"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.yuwixx.dev" }],
+      "destination": "https://yuwixx.dev/:path*",
+      "permanent": true
+    }
+  ]
+}

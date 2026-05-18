@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS variables ─────────────────────────────────────── */
+:root {
+  --main-font: 'Inter', sans-serif;
+  --clock-color: #ffffff;
+  --clock-shadow: rgba(0, 0, 0, 0.4);
+  --accent: #6366f1;
+  --text-main: #ffffff;
+  --text-dim: #a1a1aa;
+}
+
+.light-theme {
+  --clock-color: rgba(0, 0, 0, 0.85);
+  --clock-shadow: rgba(255, 255, 255, 0.3);
+  --text-main: rgba(0, 0, 0, 0.85);
+  --text-dim: rgba(0, 0, 0, 0.5);
+}
+
+/* ── Base ──────────────────────────────────────────────── */
+* {
+  cursor: none !important;
+  font-family: var(--main-font) !important;
+}
+
+body {
+  margin: 0;
+  background-color: #0a0a0c;
+  color: var(--text-main);
+  overflow: hidden;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  * { cursor: auto !important; }
+}
+
+/* ── Custom cursor ─────────────────────────────────────── */
+.cursor-outline {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  z-index: 10000;
+  border: 1.5px solid var(--clock-color);
+  background-color: var(--clock-shadow);
+  backdrop-filter: blur(1px);
+  transform: translate(-50%, -50%) scale(1);
+  transition: opacity 0.3s ease, border-color 0.4s ease, background-color 0.4s ease,
+    width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.cursor-clicking .cursor-outline {
+  transform: translate(-50%, -50%) scale(0.75);
+  background-color: var(--clock-color);
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .cursor-outline { display: none !important; }
+}
+
+/* ── Analog clock ──────────────────────────────────────── */
+.clock-number {
+  position: absolute;
+  inset: 5%;
+  text-align: center;
+}
+
+.clock-number b {
+  display: inline-block;
+  font-size: 4.5rem;
+  font-weight: 800;
+  color: var(--clock-color);
+  opacity: 0.4;
+  transition: color 0.5s ease;
+}
+
+.clock-hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: bottom;
+  border-radius: 10px;
+  background: var(--clock-color);
+  transition: background 0.5s ease;
+}
+
+.clock-center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 15px;
+  height: 15px;
+  background: var(--clock-color);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: background 0.5s ease;
+}
+
+/* ── Status dot pulse ──────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Modal fade in ─────────────────────────────────────── */
+@keyframes fadeInPane {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pane-enter {
+  animation: fadeInPane 0.25s ease forwards;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+/* ── Pointer-events exceptions ─────────────────────────── */
+input, button, select, a, [role="button"] {
+  pointer-events: auto !important;
+}
